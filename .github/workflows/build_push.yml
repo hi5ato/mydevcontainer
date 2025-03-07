@@ -21,3 +21,4 @@ jobs:
       with:
         imageName: ghcr.io/hi5ato/codespace-devcontainer
         cacheFrom: ghcr.io/hi5ato/codespace-devcontainer
+        push: always
