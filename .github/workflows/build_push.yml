@@ -1,6 +1,7 @@
 # build devcontainer and push to ghcr.io
 on:
   workflow_dispatch: {}
+  push: {}
 
 jobs:
   build-and-push:
@@ -24,4 +25,5 @@ jobs:
       with:
         imageName: ghcr.io/hi5ato/codespace-devcontainer
         cacheFrom: ghcr.io/hi5ato/codespace-devcontainer
-        push: always
+        push: filter
+        refFilterForPush: "refs/heads/main"
