@@ -20,9 +20,20 @@ jobs:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Pre-build dev container image
+
+    - name: Pre-build dev container image base
       uses: devcontainers/ci@v0.3
       with:
+        subFolder: base
+        imageName: ghcr.io/hi5ato/codespace-devcontainer-base
+        cacheFrom: ghcr.io/hi5ato/codespace-devcontainer-base
+        push: filter
+        refFilterForPush: "refs/heads/main"
+
+    - name: Pre-build dev container image brew
+      uses: devcontainers/ci@v0.3
+      with:
+        subFolder: with-brew
         imageName: ghcr.io/hi5ato/codespace-devcontainer
         cacheFrom: ghcr.io/hi5ato/codespace-devcontainer
         push: filter
