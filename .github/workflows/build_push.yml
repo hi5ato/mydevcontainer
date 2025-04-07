@@ -28,7 +28,8 @@ jobs:
       with:
         subFolder: base
         imageName: ghcr.io/hi5ato/codespace-devcontainer-base
-        cacheFrom: ghcr.io/hi5ato/codespace-devcontainer-base
+        # cacheFrom: ghcr.io/hi5ato/codespace-devcontainer-base
+        noCache: true
         push: filter
         refFilterForPush: "refs/heads/main"
 
@@ -37,6 +38,7 @@ jobs:
       with:
         subFolder: with-brew
         imageName: ghcr.io/hi5ato/codespace-devcontainer
-        cacheFrom: ghcr.io/hi5ato/codespace-devcontainer
+        # cacheFrom: ghcr.io/hi5ato/codespace-devcontainer
+        noCache: true
         push: filter
         refFilterForPush: "refs/heads/main"
