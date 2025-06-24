@@ -15,7 +15,7 @@ RUN /bin/echo -e "ja_JP.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nC.UTF-8 UTF-8" > /etc/lo
 ENV LANG ja_JP.UTF-8
 
 RUN apt-get install -y --no-install-recommends \
-    aptitude less ugrep fzf bat fd-find vim fish moreutils htop lsof lv lftp zip unzip ncat socat ssh-import-id \
+    aptitude less ugrep fzf bat fd-find vim moreutils htop lsof lv lftp zip unzip ncat socat ssh-import-id \
     && apt-get clean
 
 RUN if [ "$VARIANT" = "noble" ] || [ "$VARIANT" = "oracular" ]; then \
@@ -26,4 +26,5 @@ RUN if [ "$VARIANT" = "noble" ] || [ "$VARIANT" = "oracular" ]; then \
         fi; \
     fi
 
-RUN chsh -s /usr/bin/fish root
+# fishはbrewでいれる
+#RUN chsh -s /usr/bin/fish root
