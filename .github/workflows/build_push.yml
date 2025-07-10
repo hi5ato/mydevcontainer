@@ -1,42 +1,57 @@
 # build devcontainer and push to ghcr.io
 on:
-  workflow_dispatch: {}
-  push: {}
-  schedule:
-    - cron: '0 0 * * 0'
+    workflow_dispatch: {}
+    push: {}
+    schedule:
+        - cron: "0 0 * * 0"
 
+permissions:
+    contents: read
+    packages: write
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
+    build-base:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
 
-    - name: Checkout (GitHub)
-      uses: actions/checkout@v4
-          
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.repository_owner }}
+                password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Pre-build dev container image base
-      uses: devcontainers/ci@v0.3
-      with:
-        subFolder: base
-        imageName: ghcr.io/hi5ato/mydevcontainer-base
-        noCache: true
-        push: filter
-        refFilterForPush: "refs/heads/main"
+            - name: Pre-build dev container image base
+              id: build_base_image
+              uses: devcontainers/ci@v0.3
+              with:
+                subFolder: base
+                imageName: ghcr.io/hi5ato/mydevcontainer-base
+                noCache: ${{ github.event_name == 'schedule' }}
+                push: filter
+                refFilterForPush: "refs/heads/main, refs/heads/dev"
 
-    - name: Pre-build dev container image brew
-      uses: devcontainers/ci@v0.3
-      with:
-        subFolder: with-brew
-        imageName: ghcr.io/hi5ato/mydevcontainer
-        noCache: true
-        push: filter
-        refFilterForPush: "refs/heads/main"
+    build-brew:
+        runs-on: ubuntu-latest
+        needs: build-base
+        steps:
+            - name: Checkout (GitHub)
+              uses: actions/checkout@v4
+
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.repository_owner }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Pre-build dev container image base
+              id: build_with_brew_image
+              uses: devcontainers/ci@v0.3
+              with:
+                subFolder: with-brew
+                imageName: ghcr.io/hi5ato/mydevcontainer
+                noCache: ${{ github.event_name == 'schedule' }}
+                push: filter
+                refFilterForPush: "refs/heads/main, refs/heads/dev"
