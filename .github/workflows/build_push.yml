@@ -11,26 +11,30 @@ permissions:
 jobs:
     build-base:
         runs-on: ubuntu-latest
+        outputs:
+            imageName: ${{ steps.build_base_image.outputs.imageName }}
         steps:
             - name: Checkout (GitHub)
               uses: actions/checkout@v4
-
-            - name: Login to GitHub Container Registry
-              uses: docker/login-action@v3
-              with:
-                registry: ghcr.io
-                username: ${{ github.repository_owner }}
-                password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Pre-build dev container image base
               id: build_base_image
               uses: devcontainers/ci@v0.3
               with:
                 subFolder: base
-                imageName: ghcr.io/hi5ato/mydevcontainer-base
+                imageName: mydevcontainer-base
                 noCache: ${{ github.event_name == 'schedule' }}
-                push: filter
-                refFilterForPush: "refs/heads/main, refs/heads/dev"
+                push: never
+                cacheTo: type=gha,mode=max
+
+            - name: Export docker image
+              run: docker save ${{ steps.build_base_image.outputs.imageName }} -o /tmp/base-image.tar
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: base-image
+                path: /tmp/base-image.tar
 
     build-brew:
         runs-on: ubuntu-latest
@@ -38,6 +42,15 @@ jobs:
         steps:
             - name: Checkout (GitHub)
               uses: actions/checkout@v4
+
+            - name: Download artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: base-image
+                path: /tmp
+
+            - name: Load docker image
+              run: docker load -i /tmp/base-image.tar
 
             - name: Login to GitHub Container Registry
               uses: docker/login-action@v3

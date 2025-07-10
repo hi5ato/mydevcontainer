@@ -1,4 +1,4 @@
-FROM ghcr.io/hi5ato/mydevcontainer-base
+FROM mydevcontainer-base:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 
