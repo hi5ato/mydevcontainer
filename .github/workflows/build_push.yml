@@ -8,8 +8,9 @@ on:
 permissions:
     contents: read
     packages: write
+
 jobs:
-    build-base:
+    build-and-push:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout (GitHub)
@@ -17,44 +18,6 @@ jobs:
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
-
-            - name: Pre-build dev container image base
-              id: build_base_image
-              uses: devcontainers/ci@v0.3
-              with:
-                subFolder: base
-                imageName: mydevcontainer-base
-                noCache: ${{ github.event_name == 'schedule' }}
-                push: never
-                cacheTo: type=gha,mode=max
-
-            - name: Export docker image
-              run: docker save mydevcontainer-base -o /tmp/base-image.tar
-
-            - name: Upload artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: base-image
-                path: /tmp/base-image.tar
-
-    build-brew:
-        runs-on: ubuntu-latest
-        needs: build-base
-        steps:
-            - name: Checkout (GitHub)
-              uses: actions/checkout@v4
-
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
-
-            - name: Download artifact
-              uses: actions/download-artifact@v4
-              with:
-                name: base-image
-                path: /tmp
-
-            - name: Load docker image
-              run: docker load -i /tmp/base-image.tar
 
             - name: Login to GitHub Container Registry
               uses: docker/login-action@v3
@@ -64,11 +27,19 @@ jobs:
                 password: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Pre-build dev container image base
-              id: build_with_brew_image
+              uses: devcontainers/ci@v0.3
+              with:
+                subFolder: base
+                imageName: mydevcontainer-base
+                push: never
+                cacheTo: type=gha,mode=max
+
+            - name: Pre-build dev container image with brew
               uses: devcontainers/ci@v0.3
               with:
                 subFolder: with-brew
                 imageName: ghcr.io/hi5ato/mydevcontainer
                 noCache: ${{ github.event_name == 'schedule' }}
-                push: always
-                # refFilterForPush: "refs/heads/main, refs/heads/dev"
+                push: filter
+                refFilterForPush: "refs/heads/main, refs/heads/dev"
+
