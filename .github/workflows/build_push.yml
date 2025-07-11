@@ -11,8 +11,6 @@ permissions:
 jobs:
     build-base:
         runs-on: ubuntu-latest
-        outputs:
-            imageName: ${{ steps.build_base_image.outputs.imageName }}
         steps:
             - name: Checkout (GitHub)
               uses: actions/checkout@v4
@@ -31,7 +29,7 @@ jobs:
                 cacheTo: type=gha,mode=max
 
             - name: Export docker image
-              run: docker save ${{ steps.build_base_image.outputs.imageName }} -o /tmp/base-image.tar
+              run: docker save mydevcontainer-base -o /tmp/base-image.tar
 
             - name: Upload artifact
               uses: actions/upload-artifact@v4
@@ -72,5 +70,5 @@ jobs:
                 subFolder: with-brew
                 imageName: ghcr.io/hi5ato/mydevcontainer
                 noCache: ${{ github.event_name == 'schedule' }}
-                push: filter
-                refFilterForPush: "refs/heads/main, refs/heads/dev"
+                push: always
+                # refFilterForPush: "refs/heads/main, refs/heads/dev"
