@@ -9,10 +9,10 @@
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"upgradePackages": true,
-			"installZsh": false,
+			"installZsh": false
 			// "userUid": "1000",
 			// "userGid": "1000",
-			"username": "vscode"
+			// "username": "vscode"
 		},
 		"ghcr.io/devcontainers/features/git:1": {
             "version": "latest",

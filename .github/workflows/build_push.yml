@@ -26,20 +26,19 @@ jobs:
                 username: ${{ github.repository_owner }}
                 password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Pre-build dev container image base
+            # - name: Pre-build dev container image base debug
+            #   uses: devcontainers/ci@v0.3
+            #   with:
+            #     subFolder: debug
+            #     imageName: ghcr.io/hi5ato/mydevcontainer-debug
+            #     cacheTo: type=gha,mode=max
+            #     push: always
+
+            - name: Pre-build dev container image
               uses: devcontainers/ci@v0.3
               with:
                 subFolder: base
-                imageName: mydevcontainer-base
-                push: never
-                cacheTo: type=gha,mode=max
-
-            - name: Pre-build dev container image with brew
-              uses: devcontainers/ci@v0.3
-              with:
-                subFolder: with-brew
                 imageName: ghcr.io/hi5ato/mydevcontainer
                 noCache: ${{ github.event_name == 'schedule' }}
-                push: filter
-                refFilterForPush: "refs/heads/main, refs/heads/dev"
-
+                push: always
+                cacheTo: type=gha,mode=max
