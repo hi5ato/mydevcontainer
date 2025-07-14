@@ -67,6 +67,10 @@ set PATH $PATH /home/lala/.local/bin
 
 ***and apply***
 
+```fish
+source ~/.config/fish/config.fish
+```
+
 #### install fundle
 
 ```fish
