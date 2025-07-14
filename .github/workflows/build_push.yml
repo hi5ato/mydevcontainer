@@ -27,6 +27,14 @@ jobs:
                 username: ${{ github.repository_owner }}
                 password: ${{ secrets.GITHUB_TOKEN }}
 
+            - name: Restore cache
+              uses: actions/cache@v4
+              with:
+                path: /tmp/docker-cache
+                key: devcontainer-cache-${{ runner.os }}-${{ hashFiles('base/.devcontainer/**') }}
+                restore-keys: |
+                  devcontainer-cache-${{ runner.os }}-
+
             # - name: Pre-build dev container image base debug
             #   uses: devcontainers/ci@v0.3
             #   with:
@@ -42,4 +50,10 @@ jobs:
                 imageName: ghcr.io/hi5ato/mydevcontainer
                 noCache: ${{ github.event_name == 'schedule' }}
                 push: always
-                cacheTo: type=gha,mode=max
+                cacheFrom: type=local,src=/tmp/docker-cache
+                cacheTo: type=local,dest=/tmp/docker-cache-new,mode=max
+
+            - name: Move cache
+              run: |
+                rm -rf /tmp/docker-cache
+                mv /tmp/docker-cache-new /tmp/docker-cache
