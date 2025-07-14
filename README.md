@@ -77,6 +77,12 @@ source ~/.config/fish/config.fish
 curl -sfL https://git.io/fundle-install | fish
 ```
 
+## change apt source
+
+```fish
+sudo cp ~/ubuntu.sources /etc/apt/sources.list.d/
+```
+
 ## install other apps
 
 ```fish
