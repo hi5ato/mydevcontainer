@@ -30,6 +30,9 @@ RUN groupadd -g 1000 $USERNAME
 RUN adduser --disabled-password --gecos "" --uid 1000 --gid 1000 $USERNAME
 RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
 
+RUN apt-get update && apt-get install -y fish && apt-get clean
+RUN chsh -s /bin/fish ${USERNAME}
+
 # brew
 RUN apt-get update && apt-get install -y --no-install-recommends git file build-essential && apt-get clean
 
@@ -38,12 +41,12 @@ WORKDIR /home/${USERNAME}
 RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
 RUN echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
-RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; brew doctor && brew install lazygit fish git-credential-oauth
+RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; brew doctor && brew install lazygit git-credential-oauth
 
 ADD ./ubuntu.sources /home/${USERNAME}
 
 USER root
-RUN chsh -s /home/linuxbrew/.linuxbrew/bin/fish ${USERNAME}
+# RUN chsh -s /home/linuxbrew/.linuxbrew/bin/fish ${USERNAME}
 
 # nodejs
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -   && \
