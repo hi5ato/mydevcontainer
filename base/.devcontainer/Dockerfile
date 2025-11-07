@@ -44,6 +44,7 @@ RUN echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
 RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; brew doctor && brew install lazygit git-credential-oauth
 
 ADD ./ubuntu.sources /home/${USERNAME}
+ADD ./copy_apt_repos.sh /home/${USERNAME}
 
 USER root
 # RUN chsh -s /home/linuxbrew/.linuxbrew/bin/fish ${USERNAME}
