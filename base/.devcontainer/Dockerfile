@@ -30,8 +30,15 @@ RUN groupadd -g 1000 $USERNAME
 RUN adduser --disabled-password --gecos "" --uid 1000 --gid 1000 $USERNAME
 RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
 
+# fish shell
 RUN apt-get update && apt-get install -y fish && apt-get clean
 RUN chsh -s /bin/fish ${USERNAME}
+
+# 不要なapt設定を削除
+RUN rm -f /etc/apt/apt.conf.d/docker-*
+
+# command not found
+RUN apt install -y command-not-found && apt-get clean
 
 # brew
 RUN apt-get update && apt-get install -y --no-install-recommends git file build-essential && apt-get clean
