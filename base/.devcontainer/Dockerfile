@@ -31,8 +31,8 @@ RUN adduser --disabled-password --gecos "" --uid 1000 --gid 1000 $USERNAME
 RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME
 
 # fish shell
-RUN apt-get update && apt-get install -y fish && apt-get clean
-RUN chsh -s /bin/fish ${USERNAME}
+# RUN apt-get update && apt-get install -y fish && apt-get clean
+# RUN chsh -s /bin/fish ${USERNAME}
 
 # 不要なapt設定を削除
 RUN rm -f /etc/apt/apt.conf.d/docker-*
@@ -48,7 +48,7 @@ WORKDIR /home/${USERNAME}
 RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
 RUN echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
-RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; brew doctor && brew install lazygit git-credential-oauth
+RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"; brew doctor && brew install lazygit git-credential-oauth fish
 
 ADD ./ubuntu.sources /home/${USERNAME}
 ADD ./copy_apt_repos.sh /home/${USERNAME}
@@ -60,3 +60,6 @@ USER root
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -   && \
     apt-get install -y nodejs && \
     apt-get clean
+
+USER ${USERNAME}
+CMD ["fish"]
